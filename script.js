@@ -22,14 +22,18 @@ function extractVideoID(url) {
 // Function to display thumbnails based on video ID
 function displayThumbnails(videoId) {
   const thumbnailsDiv = document.getElementById('thumbnails');
+  const downloadButton = document.getElementById('downloadThumbnails');
   thumbnailsDiv.innerHTML = '';
 
   if (!videoId) {
     thumbnailsDiv.innerHTML = '<p>Invalid YouTube URL. Please try again.</p>';
+    downloadButton.style.display = 'none'; // Hide download button if no valid URL
     return;
   }
 
   const qualities = ['maxresdefault', 'sddefault', 'hqdefault', 'mqdefault', 'default'];
+  let thumbnails = [];
+
   qualities.forEach(quality => {
     const img = document.createElement('img');
     img.src = `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
@@ -38,6 +42,25 @@ function displayThumbnails(videoId) {
       img.src = 'https://via.placeholder.com/480x360?text=No+Thumbnail';
     };
     thumbnailsDiv.appendChild(img);
+    thumbnails.push(img.src); // Collect the image URLs
+  });
+
+  // Show the download button when thumbnails are loaded
+  downloadButton.style.display = 'inline-block';
+
+  // Add event listener to download button
+  downloadButton.addEventListener('click', () => {
+    downloadThumbnails(thumbnails);
+  });
+}
+
+// Function to download all the thumbnails
+function downloadThumbnails(thumbnails) {
+  thumbnails.forEach((src, index) => {
+    const link = document.createElement('a');
+    link.href = src;
+    link.download = `thumbnail_${index + 1}.jpg`;
+    link.click();
   });
 }
 
