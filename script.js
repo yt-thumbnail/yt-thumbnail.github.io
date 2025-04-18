@@ -1,60 +1,13 @@
-document.getElementById('fetchBtn').addEventListener('click', () => {
-  const url = document.getElementById('youtubeUrl').value.trim();
-  const errorDiv = document.getElementById('error');
-  const thumbnailsDiv = document.getElementById('thumbnails');
-  thumbnailsDiv.innerHTML = '';
-  errorDiv.textContent = '';
-
-  const videoId = extractVideoID(url);
-
-  if (!videoId) {
-    errorDiv.textContent = 'Please enter a valid YouTube video URL.';
-    return;
-  }
-
-  const thumbnailQualities = [
-    { label: 'Default', url: `https://img.youtube.com/vi/${videoId}/default.jpg` },
-    { label: 'Medium', url: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` },
-    { label: 'High', url: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` },
-    { label: 'Standard', url: `https://img.youtube.com/vi/${videoId}/sddefault.jpg` },
-    { label: 'Max Resolution', url: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` },
-  ];
-
-  thumbnailQualities.forEach(thumb => {
-    const container = document.createElement('div');
-    container.classList.add('thumb-container');
-
-    const img = document.createElement('img');
-    img.src = thumb.url;
-    img.alt = `${thumb.label} thumbnail`;
-
-    const label = document.createElement('p');
-    label.textContent = thumb.label;
-
-    const link = document.createElement('a');
-    link.href = thumb.url;
-    link.download = `${videoId}-${thumb.label}.jpg`;
-    link.textContent = 'Download';
-    link.classList.add('download-btn');
-    link.target = '_blank';
-
-    container.appendChild(img);
-    container.appendChild(label);
-    container.appendChild(link);
-
-    thumbnailsDiv.appendChild(container);
-  });
-});
-
 function extractVideoID(url) {
   try {
     const parsed = new URL(url);
 
+    // Handle youtu.be links
     if (parsed.hostname === 'youtu.be') {
-      // Remove any parameters after the video ID
       return parsed.pathname.slice(1).split('?')[0];
     }
 
+    // Handle standard YouTube links
     if (parsed.hostname.includes('youtube.com')) {
       return parsed.searchParams.get('v');
     }
@@ -64,3 +17,30 @@ function extractVideoID(url) {
     return null;
   }
 }
+
+function displayThumbnails(videoId) {
+  const thumbnailsDiv = document.getElementById('thumbnails');
+  thumbnailsDiv.innerHTML = '';
+
+  if (!videoId) {
+    thumbnailsDiv.innerHTML = '<p>Invalid YouTube URL. Please try again.</p>';
+    return;
+  }
+
+  const qualities = ['maxresdefault', 'sddefault', 'hqdefault', 'mqdefault', 'default'];
+  qualities.forEach(quality => {
+    const img = document.createElement('img');
+    img.src = `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
+    img.alt = `${quality} thumbnail`;
+    img.onerror = () => {
+      img.src = 'https://via.placeholder.com/480x360?text=No+Thumbnail';
+    };
+    thumbnailsDiv.appendChild(img);
+  });
+}
+
+document.getElementById('getThumbnails').addEventListener('click', () => {
+  const url = document.getElementById('youtubeUrl').value;
+  const videoId = extractVideoID(url);
+  displayThumbnails(videoId);
+});
