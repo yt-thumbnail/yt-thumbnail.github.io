@@ -53,15 +53,29 @@ function displayThumbnails(videoId) {
   window.thumbnailsToDownload = thumbnails;
 }
 
-// Function to download all the thumbnails when the button is clicked
+// Function to download all the thumbnails using Blob
 function downloadThumbnails() {
   const thumbnails = window.thumbnailsToDownload || [];
 
   thumbnails.forEach((src, index) => {
-    const link = document.createElement('a');
-    link.href = src;
-    link.download = `thumbnail_${index + 1}.jpg`; // Use a dynamic name for each thumbnail
-    link.click(); // Simulate a click to trigger the download
+    fetch(src)
+      .then(response => response.blob()) // Fetch the image as a Blob
+      .then(blob => {
+        // Create a URL for the Blob
+        const blobUrl = URL.createObjectURL(blob);
+
+        // Create an anchor element to simulate a download
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = `thumbnail_${index + 1}.jpg`; // Use a dynamic name for each thumbnail
+        link.click(); // Simulate a click to trigger the download
+
+        // Revoke the Object URL after download to release resources
+        URL.revokeObjectURL(blobUrl);
+      })
+      .catch(error => {
+        console.error('Download failed for thumbnail:', error);
+      });
   });
 }
 
