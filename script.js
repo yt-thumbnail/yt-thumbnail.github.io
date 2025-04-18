@@ -1,3 +1,4 @@
+// Function to extract video ID from the URL
 function extractVideoID(url) {
   try {
     const parsed = new URL(url);
@@ -18,6 +19,7 @@ function extractVideoID(url) {
   }
 }
 
+// Function to display thumbnails based on video ID
 function displayThumbnails(videoId) {
   const thumbnailsDiv = document.getElementById('thumbnails');
   thumbnailsDiv.innerHTML = '';
@@ -39,8 +41,9 @@ function displayThumbnails(videoId) {
   });
 }
 
+// Event listener for button click to fetch and display thumbnails
 document.getElementById('getThumbnails').addEventListener('click', () => {
-  const url = document.getElementById('youtubeUrl').value;
+  const url = document.getElementById('videoUrl').value;
   const videoId = extractVideoID(url);
   displayThumbnails(videoId);
 });
