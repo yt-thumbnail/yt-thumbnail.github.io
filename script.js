@@ -48,14 +48,14 @@ function displayThumbnails(videoId) {
   // Show the download button when thumbnails are loaded
   downloadButton.style.display = 'inline-block';
 
-  // Add event listener to download button
-  downloadButton.addEventListener('click', () => {
-    downloadThumbnails(thumbnails);
-  });
+  // Store the thumbnails array in the window object for later use
+  window.thumbnailsToDownload = thumbnails;
 }
 
-// Function to download all the thumbnails
-function downloadThumbnails(thumbnails) {
+// Function to download all the thumbnails when the button is clicked
+function downloadThumbnails() {
+  const thumbnails = window.thumbnailsToDownload || [];
+
   thumbnails.forEach((src, index) => {
     const link = document.createElement('a');
     link.href = src;
@@ -64,9 +64,14 @@ function downloadThumbnails(thumbnails) {
   });
 }
 
-// Event listener for button click to fetch and display thumbnails
+// Event listener for "Get Thumbnails" button to fetch and display thumbnails
 document.getElementById('getThumbnails').addEventListener('click', () => {
   const url = document.getElementById('videoUrl').value;
   const videoId = extractVideoID(url);
   displayThumbnails(videoId);
+});
+
+// Event listener for "Download Thumbnails" button to download images
+document.getElementById('downloadThumbnails').addEventListener('click', () => {
+  downloadThumbnails();
 });
