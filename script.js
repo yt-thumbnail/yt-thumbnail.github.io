@@ -49,11 +49,16 @@ document.getElementById('fetchBtn').addEventListener('click', () => {
 function extractVideoID(url) {
   try {
     const parsed = new URL(url);
+
     if (parsed.hostname === 'youtu.be') {
-      return parsed.pathname.slice(1);
-    } else if (parsed.hostname.includes('youtube.com')) {
+      // Remove any parameters after the video ID
+      return parsed.pathname.slice(1).split('?')[0];
+    }
+
+    if (parsed.hostname.includes('youtube.com')) {
       return parsed.searchParams.get('v');
     }
+
     return null;
   } catch (e) {
     return null;
