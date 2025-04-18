@@ -23,7 +23,7 @@ function extractVideoID(url) {
 function displayThumbnails(videoId) {
   const thumbnailsDiv = document.getElementById('thumbnails');
   const downloadButton = document.getElementById('downloadThumbnails');
-  thumbnailsDiv.innerHTML = '';
+  thumbnailsDiv.innerHTML = ''; // Clear any existing thumbnails
 
   if (!videoId) {
     thumbnailsDiv.innerHTML = '<p>Invalid YouTube URL. Please try again.</p>';
@@ -34,6 +34,7 @@ function displayThumbnails(videoId) {
   const qualities = ['maxresdefault', 'sddefault', 'hqdefault', 'mqdefault', 'default'];
   let thumbnails = [];
 
+  // Loop through each thumbnail quality and display them
   qualities.forEach(quality => {
     const img = document.createElement('img');
     img.src = `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
@@ -42,10 +43,10 @@ function displayThumbnails(videoId) {
       img.src = 'https://via.placeholder.com/480x360?text=No+Thumbnail';
     };
     thumbnailsDiv.appendChild(img);
-    thumbnails.push(img.src); // Collect the image URLs
+    thumbnails.push(img.src); // Collect the image URLs to trigger download later
   });
 
-  // Show the download button when thumbnails are loaded
+  // Show the "Download Thumbnails" button when thumbnails are loaded
   downloadButton.style.display = 'inline-block';
 
   // Store the thumbnails array in the window object for later use
@@ -59,8 +60,8 @@ function downloadThumbnails() {
   thumbnails.forEach((src, index) => {
     const link = document.createElement('a');
     link.href = src;
-    link.download = `thumbnail_${index + 1}.jpg`;
-    link.click();
+    link.download = `thumbnail_${index + 1}.jpg`; // Use a dynamic name for each thumbnail
+    link.click(); // Simulate a click to trigger the download
   });
 }
 
